@@ -1,0 +1,19 @@
+1. Un ejecutable montado en las gafas
+2. Prestar las gafas para el Lunes 19
+
+
+Codigo:
+
+
+1. Hacer funcional el menú
+2. Hacer funcional la rotación de imagenes (el usuario al oprimir trigger cambia de imagen)
+3. El usuario logra volver a menú principal y ecoger que ruta quiere hacer
+4. El menú 
+	-> hacer reeccorrido del bloque 1
+	-> Hacer recorrido del bloque 4
+	-> Hacer recorrido genral
+
+5. Hay un video como intruducción cunado se inica el juego
+6. Podrías añadir cosas
+
+Link del repo oficial: https://github.com/DevCristobalvc/TourUSC.git
