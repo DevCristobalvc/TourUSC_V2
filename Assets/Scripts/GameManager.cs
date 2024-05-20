@@ -10,7 +10,10 @@ public class GameManager : MonoBehaviour
     //Array que contiene las "Escenas"
     [SerializeField] private SceneContainer[] containers;
     //Plataforma de Inicio
-    [SerializeField] private GameObject startMenu;
+    [SerializeField] private GameObject startMenu, exitingSignal;
+    [SerializeField] private HandController leftHand, rightHand;
+    private float exitMenuTimer;
+    private bool onMenu = true;
 
     //Identificador del momento actual del Recorrido
     private string currentSphere;
@@ -29,12 +32,51 @@ public class GameManager : MonoBehaviour
 
     //Funcion que retorna si un momento del Recorrido existe basado en su escena y el ID dado
     public bool SphereExists(SceneContainer scene, string id) => scene.container.Any(c => c.id == id);
+
+    void Update()
+    {
+        if (!onMenu && leftHand.HandGripValue() > 0f && rightHand.HandGripValue() > 0f)
+        {
+            if (exitMenuTimer < 3.5f)
+            {
+                exitMenuTimer += Time.deltaTime;
+                exitingSignal.SetActive(true);
+            }
+
+            else
+                SelectMenu();
+        }
+
+        else
+        {
+            exitMenuTimer = 0f;
+            
+            if (exitingSignal.activeSelf)
+                exitingSignal.SetActive(false);
+        }
+    }
+
+    public void SelectMenu()
+    {
+        var currSc = GetSphereContainer(currentScene, currentSphere);
+        
+        if (currSc != null)
+            foreach (var go in currSc.sphereObjects) if (go != null) go.SetActive(false);
+        
+        onMenu = true;
+        currentScene = null;
+        currentSphere = string.Empty;
+        
+        sphereRenderer.gameObject.SetActive(false);
+        startMenu.SetActive(true);
+    }
     
     //Funcion para cambiar la Escena con un ID
     public void SelectScene(string id)
     {
         if (!SceneExists(id)) return;
 
+        onMenu = false;
         startMenu.SetActive(false);
         currentScene = GetSceneContainer(id);
         sphereRenderer.gameObject.SetActive(true);
@@ -47,8 +89,10 @@ public class GameManager : MonoBehaviour
         if (!SphereExists(currentScene, id)) return;
         
         var currSc = GetSphereContainer(currentScene, currentSphere);
-        foreach (var go in currSc.sphereObjects) go.SetActive(false);
-            
+        
+        if (currSc != null)
+            foreach (var go in currSc.sphereObjects) if (go != null) go.SetActive(false);
+
         var newSc = GetSphereContainer(currentScene, id);
         currentSphere = id;
         sphereRenderer.material = newSc.sphereMaterial;
